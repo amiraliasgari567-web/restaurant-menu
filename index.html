@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فروشگاه زمانی | نسخه حرفه‌ای همراه با پنل ادمین</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  body{font-family: 'Vazirmatn', sans-serif; margin:0; padding:0;}
+  .top-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+  .logo{font-weight:700}
+  .search-box input{padding:8px 10px;border-radius:8px;border:1px solid #ddd}
+  .cart-btn{background:#ffeb3b;border:none;padding:8px 12px;border-radius:8px}
+  .cat-bar{background:#fafafa;padding:8px}
+  .cat-scroll{display:flex;gap:8px;overflow-x:auto;padding:6px}
+  .cat-item{padding:8px 12px;border-radius:8px;background:#fff;border:1px solid #eee;cursor:pointer}
+  .cat-item.active{background:#2196f3;color:#fff}
+  .container{padding:16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+  .card{background:#fff;padding:12px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.05)}
+  .img-box img{width:100%;height:120px;object-fit:cover;border-radius:8px}
+  .buy-btn{width:100%;padding:8px;margin-top:8px;border:none;border-radius:8px;background:#4caf50;color:#fff}
+  .admin-btn{width:48%;padding:8px;margin-top:6px;border:none;border-radius:8px;color:#fff;cursor:pointer}
+
+  /* سبک ساده برای پنل */
+  #adminPanel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 100vh;
+    background: #222;
+    color: #fff;
+    padding: 20px;
+    transform: translateX(-100%);
+    transition: .3s;
+    z-index: 9999;
+    overflow-y: auto;
+  }
+  #adminPanel.open { transform: translateX(0); }
+  #adminToggle {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px 18px;
+    background: #ff9800;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10000;
+  }
+  .admin-input { width: 100%; padding: 8px; margin: 5px 0; border-radius: 8px; border: none; }
+  .admin-btn-full { width: 100%; padding: 10px; background: #4caf50; border: none; border-radius: 10px; color: #fff; cursor: pointer; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="logo">فروشگاه زمانی</div>
+  <div class="search-box">
+    <input type="text" id="search" placeholder="جستجوی محصول">
+  </div>
+  <button class="cart-btn"><span>🛒</span> سبد خرید</button>
+</header>
+
+<!-- دکمه ورود ادمین -->
+<button onclick="loginAdmin()" id="adminLoginBtn"
+style="position:fixed;bottom:20px;right:20px;padding:10px 15px;border:none;border-radius:10px;background:#000;color:#fff;z-index:9999">
+ورود ادمین
+</button>
+
+<div class="cat-bar">
+  <div class="cat-scroll">
+    <button class="cat-item active" data-cat="all">همه</button>
+    <button class="cat-item" data-cat="drinks">نوشیدنی</button>
+    <button class="cat-item" data-cat="snacks">تنقلات</button>
+    <button class="cat-item" data-cat="food">مواد غذایی</button>
+  </div>
+</div>
+
+<div class="container">
+  <div id="productGrid" class="grid"></div>
+</div>
+
+<!-- دکمه باز کردن پنل -->
+<button id="adminToggle">ادمین</button>
+
+<!-- پنل ادمین -->
+<div id="adminPanel">
+  <h2>پنل مدیریت</h2>
+  <label>نام محصول:</label>
+  <input id="pTitle" class="admin-input" type="text">
+
+  <label>توضیحات:</label>
+  <input id="pDesc" class="admin-input" type="text">
+
+  <label>لینک عکس:</label>
+  <input id="pImg" class="admin-input" type="text">
+
+  <label>دسته‌بندی:</label>
+  <input id="pCat" class="admin-input" type="text" placeholder="drinks / snacks / food">
+
+  <button id="adminAddBtn" class="admin-btn-full">➕ اضافه کردن محصول</button>
+</div>
+
+<script>
+// ===== داده‌ها و حالت ادمین =====
+let isAdmin = false;
+let products = [
+  {title:'Monster Loco', desc:'نوشیدنی انرژی زا', img:'https://arazkala.com/wp-content/uploads/2021/11/monster-mango-loco.jpg', category:'drinks'},
+  {title:'کیت‌کت ژاپنی', desc:'تنقلات خارجی', img:'https://arazkala.com/wp-content/uploads/2021/04/kitkat.jpg', category:'snacks'},
+  {title:'فانتا آلمانی', desc:'نوشابه خارجی', img:'https://arazkala.com/wp-content/uploads/2021/05/fanta-orange.jpg', category:'drinks'},
+  {title:'چیپس لیز چدار', desc:'محصول ترکیه', img:'https://arazkala.com/wp-content/uploads/2021/11/lays-cheese.jpg', category:'snacks'}
+];
+
+// المان‌ها
+const adminPanel = document.getElementById("adminPanel");
+const adminToggle = document.getElementById("adminToggle");
+const adminAddBtn = document.getElementById("adminAddBtn");
+const pTitle = document.getElementById("pTitle");
+const pDesc = document.getElementById("pDesc");
+const pImg = document.getElementById("pImg");
+const pCat = document.getElementById("pCat");
+const search = document.getElementById("search");
+
+let editIndex = -1; // -1 means adding new
+
+// ===== تابع رندر محصولات =====
+function render(cat = "all") {
+  const grid = document.getElementById("productGrid");
+  grid.innerHTML = "";
+
+  products.forEach((p, i) => {
+    if (cat === "all" || p.category === cat) {
+      let adminButtons = isAdmin
+        ? `<div style='display:flex;gap:6px;margin-top:6px'>
+             <button class='admin-btn' style='background:#2196f3' onclick='editProduct(${i})'>✏ ویرایش</button>
+             <button class='admin-btn' style='background:#f44336' onclick='deleteProduct(${i})'>🗑 حذف</button>
+           </div>`
+        : "";
+
+      grid.innerHTML += `
+        <div class='card'>
+          <div class='img-box'><img src='${p.img}' alt='${p.title}'></div>
+          <h3>${p.title}</h3>
+          <p>${p.desc}</p>
+          <button class='buy-btn'>افزودن به سبد</button>
+          ${adminButtons}
+        </div>`;
+    }
+  });
+}
+
+// ===== ورود ساده ادمین =====
+function loginAdmin(){
+    let pass = prompt("رمز ادمین را وارد کنید:");
+    if(pass === "behzad1142zamani"){
+        isAdmin = true;
+        alert("ورود موفق!");
+        adminPanel.classList.add('open');
+        render();
+    } else {
+        alert("رمز اشتباه است.");
+    }
+}
+
+// ===== باز/بسته کردن پنل توسط دکمه ادمین (فقط در صورت ورود) =====
+adminToggle.onclick = ()=>{
+  if(!isAdmin) return alert("شما ادمین نیستید!");
+  adminPanel.classList.toggle("open");
+};
+
+// ===== تابع پاک‌سازی فرم =====
+function clearForm(){
+  pTitle.value = "";
+  pDesc.value = "";
+  pImg.value = "";
+  pCat.value = "";
+  editIndex = -1;
+  adminAddBtn.textContent = '➕ اضافه کردن محصول';
+}
+
+// ===== افزودن یا ذخیره ویرایش =====
+adminAddBtn.addEventListener('click', ()=>{
+  let t = pTitle.value.trim();
+  let d = pDesc.value.trim();
+  let i = pImg.value.trim();
+  let c = pCat.value.trim();
+
+  if(!t || !d || !i || !c){
+    alert("لطفا همه فیلدها را پر کنید");
+    return;
+  }
+
+  if(editIndex === -1){
+    // اضافه کردن
+    products.push({title:t,desc:d,img:i,category:c});
+    alert('محصول اضافه شد!');
+  } else {
+    // ذخیره ویرایش
+    products[editIndex] = {title:t,desc:d,img:i,category:c};
+    alert('ویرایش انجام شد!');
+  }
+
+  clearForm();
+  render();
+});
+
+// ===== حذف محصول =====
+function deleteProduct(i){
+  if(confirm("آیا از حذف این محصول مطمئنید؟")){
+    products.splice(i,1);
+    render();
+  }
+}
+
+// ===== ویرایش محصول =====
+function editProduct(i){
+  let p = products[i];
+  pTitle.value = p.title;
+  pDesc.value = p.desc;
+  pImg.value = p.img;
+  pCat.value = p.category;
+  editIndex = i;
+  adminPanel.classList.add('open');
+  adminAddBtn.textContent = '✔ ذخیره تغییرات';
+}
+
+// ===== جستجو =====
+search.addEventListener("input", function(){
+  const q = this.value.toLowerCase();
+  document.querySelectorAll(".card").forEach(card=>{
+    const title = card.querySelector("h3").textContent.toLowerCase();
+    card.style.display = title.includes(q) ? "block" : "none";
+  });
+});
+
+// ===== دسته‌بندی =====
+document.querySelectorAll(".cat-item").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".cat-item").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+    render(btn.dataset.cat);
+  });
+});
+
+// رندر اولیه
+render();
+</script>
+
+</body>
+</html>
