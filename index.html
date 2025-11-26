@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پخش موادغذایی زمانی</title>
+<style>
+:root { --bg:#f6f7f9; --card:#fff; --accent:#0ea5a4; --muted:#6b7280; --dark:#111827; --radius:12px; }
+body { font-family:sans-serif; background:var(--bg); color:var(--dark); margin:0; padding:0; }
+header { background:linear-gradient(90deg,#0f172a,#0b1220); color:#fff; padding:18px 20px; display:flex; align-items:center; gap:20px; position:sticky; top:0; z-index:50;}
+.logo { font-size:18px; font-weight:700; }
+.search input { width:100%; padding:8px 12px; border-radius:8px; border:0; outline:0; }
+.cart-btn { background:var(--accent); color:#fff; padding:8px 12px; border:0; border-radius:8px; cursor:pointer; }
+.wrap { display:grid; grid-template-columns:260px 1fr; gap:20px; max-width:1200px; margin:24px auto; padding:0 16px; }
+aside { background:var(--card); border-radius:var(--radius); padding:16px; box-shadow:0 6px 18px rgba(2,6,23,0.06); }
+aside .cats a { display:block; padding:10px; border-radius:8px; text-decoration:none; color:var(--dark); margin-bottom:8px; }
+aside .cats a.active { background:#f0fdfa; color:var(--accent); font-weight:700; }
+.content .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:18px; }
+.card { background:var(--card); border-radius:var(--radius); padding:12px; box-shadow:0 6px 18px rgba(2,6,23,0.04); display:flex; flex-direction:column; gap:8px; transition:transform .16s ease; }
+.card:hover { transform:translateY(-6px); box-shadow:0 10px 30px rgba(2,6,23,0.08); }
+.card img { width:100%; height:150px; object-fit:contain; border-radius:8px; background:#fff; }
+.card h3 { margin:0; font-size:15px; }
+.card p { margin:0; color:var(--muted); font-size:13px; }
+
+.admin-panel { max-width:1200px; margin:24px auto; padding:0 16px; }
+form { background:#fff; padding:16px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); margin-bottom:24px; }
+form input, form select { width:100%; padding:8px 10px; margin:6px 0; border-radius:6px; border:1px solid #ccc; }
+form button { background:#0ea5a4; color:#fff; padding:10px 14px; border:none; border-radius:6px; cursor:pointer; margin-top:8px; }
+table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
+table th, table td { padding:12px; text-align:right; border-bottom:1px solid #ddd; }
+table th { background:#0ea5a4; color:#fff; }
+button.edit, button.delete { padding:6px 10px; border:none; border-radius:6px; cursor:pointer; color:#fff; }
+button.edit { background:#f59e0b; }
+button.delete { background:#ef4444; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">پخش مواد غذایی زمانی</div>
+  <div style="flex:1;margin:0 20px;">
+    <input class="search" type="text" id="search" placeholder="جستجوی محصول..." />
+  </div>
+  <button class="cart-btn">سبد خرید</button>
+</header>
+
+<div class="wrap">
+  <aside>
+    <h4>دسته‌بندی‌ها</h4>
+    <div class="cats">
+      <a href="#" data-cat="all" class="active">همه</a>
+      <a href="#" data-cat="drinks">نوشیدنی‌ها</a>
+      <a href="#" data-cat="snacks">تنقلات و شکلات</a>
+      <a href="#" data-cat="food">مواد غذایی</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="grid" id="productGrid"></div>
+  </main>
+</div>
+
+<!-- پنل ادمین -->
+<div class="admin-panel">
+  <form id="addProductForm">
+    <h3>افزودن محصول جدید</h3>
+    <input type="text" id="title" placeholder="نام محصول" required>
+    <input type="text" id="desc" placeholder="توضیح کوتاه" required>
+    <input type="text" id="img" placeholder="لینک تصویر محصول" required>
+    <select id="category">
+      <option value="drinks">نوشیدنی‌ها</option>
+      <option value="snacks">تنقلات و شکلات</option>
+      <option value="food">مواد غذایی</option>
+    </select>
+    <button type="submit">افزودن محصول</button>
+  </form>
+
+  <h3>محصولات موجود</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>نام محصول</th>
+        <th>توضیح</th>
+        <th>دسته‌بندی</th>
+        <th>تصویر</th>
+        <th>عملیات</th>
+      </tr>
+    </thead>
+    <tbody id="productTableBody"></tbody>
+  </table>
+</div>
+
+<script>
+let products = JSON.parse(localStorage.getItem('products')) || [
+  {title:'Monster Mango Loco', desc:'نوشیدنی انرژی‌زا وارداتی از آمریکا', img:'https://arazkala.com/wp-content/uploads/2021/11/monster-mango-loco.jpg', category:'drinks'},
+  {title:'کیت‌کت ژاپنی', desc:'تنقلات وارداتی', img:'https://arazkala.com/wp-content/uploads/2021/04/kitkat.jpg', category:'snacks'},
+  {title:'فانتا پرتقال آلمانی', desc:'نوشابه گازدار وارداتی', img:'https://arazkala.com/wp-content/uploads/2021/05/fanta-orange.jpg', category:'drinks'},
+  {title:'چیپس لیز چدار', desc:'وارداتی از ترکیه', img:'https://arazkala.com/wp-content/uploads/2021/11/lays-cheese.jpg', category:'snacks'},
+  {title:'Toblerone', desc:'شکلات وارداتی از سوئیس', img:'https://arazkala.com/wp-content/uploads/2021/10/toblerone.jpg', category:'snacks'},
+  {title:'ماکارونی Barilla', desc:'وارداتی از ایتالیا — پاستا', img:'https://mazzline.ir/wp-content/uploads/2023/04/barilla.jpg', category:'food'},
+  {title:'عسل اسپانیایی', desc:'مُختص وارداتی طبیعی', img:'https://mazzline.ir/wp-content/uploads/2023/04/honey.jpg', category:'food'}
+];
+
+function saveProducts() {
+  localStorage.setItem('products', JSON.stringify(products));
+  renderProductsGrid();
+  renderTable();
+}
+
+function renderProductsGrid(cat='all') {
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = '';
+  products.forEach(p => {
+    if(cat==='all' || p.category===cat){
+      const card = document.createElement('div');
+      card.className = `card ${p.category}`;
+      card.innerHTML = `<img src="${p.img}" alt="${p.title}"><h3>${p.title}</h3><p>${p.desc}</p>`;
+      grid.appendChild(card);
+    }
+  });
+}
+
+function renderTable(){
+  const tbody = document.getElementById('productTableBody');
+  tbody.innerHTML='';
+  products.forEach((p,index)=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>${p.title}</td>
+        <td>${p.desc}</td>
+        <td>${p.category}</td>
+        <td><img src="${p.img}" alt="${p.title}" width="80"></td>
+        <td>
+          <button class="edit" onclick="editProduct(${index})">ویرایش</button>
+          <button class="delete" onclick="deleteProduct(${index})">حذف</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+document.getElementById('addProductForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const title=document.getElementById('title').value;
+  const desc=document.getElementById('desc').value;
+  const img=document.getElementById('img').value;
+  const category=document.getElementById('category').value;
+  products.push({title,desc,img,category});
+  saveProducts();
+  this.reset();
+});
+
+function deleteProduct(index){
+  if(confirm('آیا مطمئن هستید؟')){
+    products.splice(index,1);
+    saveProducts();
+  }
+}
+
+function editProduct(index){
+  const p = products[index];
+  const newTitle = prompt('نام محصول:', p.title);
+  if(!newTitle) return;
+  const newDesc = prompt('توضیح کوتاه:', p.desc);
+  if(!newDesc) return;
+  const newImg = prompt('لینک تصویر:', p.img);
+  if(!newImg) return;
+  const newCat = prompt('دسته‌بندی (drinks/snacks/food):', p.category);
+  if(!newCat) return;
+  products[index] = {title:newTitle, desc:newDesc, img:newImg, category:newCat};
+  saveProducts();
+}
+
+// دسته‌بندی
+const cats = document.querySelectorAll('.cats a');
+cats.forEach(c=>{
+  c.addEventListener('click', e=>{
+    e.preventDefault();
+    cats.forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    renderProductsGrid(c.dataset.cat);
+  });
+});
+
+// جستجو
+document.getElementById('search').addEventListener('input', function(){
+  const q=this.value.toLowerCase();
+  renderProductsGrid('all');
+  const grid = document.getElementById('productGrid');
+  Array.from(grid.children).forEach(card=>{
+    const title = card.querySelector('h3').textContent.toLowerCase();
+    const desc = card.querySelector('p').textContent.toLowerCase();
+    if(!(title.includes(q) || desc.includes(q))){
+      card.style.display='none';
+    }
+  });
+});
+
+// بارگذاری اولیه
+renderProductsGrid();
+renderTable();
+</script>
+
+</body>
+</html>
