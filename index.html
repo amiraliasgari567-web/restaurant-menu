@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>منوی فست‌فود</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        background: #000;
+        color: #fff;
+    }
+    .container {
+        width: 100%;
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+        background: linear-gradient(#1a0000, #000);
+    }
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+        position: relative;
+    }
+    .ribbon {
+        background: red;
+        padding: 10px 25px;
+        display: inline-block;
+        font-size: 40px;
+        font-weight: bold;
+        border-radius: 6px;
+        color: #fdf5dd;
+    }
+    h2 {
+        margin-top: 40px;
+        color: #ffcf66;
+        text-align: center;
+    }
+    .menu-section {
+        margin-bottom: 35px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+    table th {
+        background: #b10f0f;
+        padding: 10px;
+        font-size: 18px;
+    }
+    table td {
+        padding: 8px 10px;
+        background: #1a1a1a;
+        border-bottom: 1px solid #333;
+        font-size: 16px;
+    }
+    .footer {
+        text-align: center;
+        margin-top: 40px;
+        font-size: 18px;
+    }
+    /* Animation styles */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes glow {
+        0% { text-shadow: 0 0 10px #ff0000; }
+        50% { text-shadow: 0 0 25px #ff9900; }
+        100% { text-shadow: 0 0 10px #ff0000; }
+    }
+
+    .container {
+        animation: fadeIn 0.9s ease;
+        transform: scale(0.96);
+        transition: 0.4s;
+    }
+    .container:hover {
+        transform: scale(1);
+    }
+
+    .ribbon {
+        animation: glow 2s infinite;
+    }
+
+    .slogan {
+        text-align: center;
+        font-size: 24px;
+        color: #ffdd99;
+        margin-top: 10px;
+        font-weight: bold;
+        animation: fadeIn 1.2s ease;
+    }
+    /* Mobile Responsive */
+    @media (max-width: 600px) {
+        .container {
+            width: 95% !important;
+            padding: 15px !important;
+        }
+        .header h1 {
+            font-size: 24px !important;
+        }
+        .slogan {
+            font-size: 18px !important;
+        }
+        .food-item {
+            flex-direction: column !important;
+            text-align: center !important;
+            padding: 10px !important;
+        }
+        .food-item h3 {
+            font-size: 18px !important;
+        }
+        .price {
+            font-size: 20px !important;
+            margin-top: 5px !important;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="ribbon">پیتزا تپل شهرری</div>
+   
+          <div class="slogan">شعبه دیگری ندارد</div>
+    <div class="slogan">تغذیه سالم شما سرلوحه تلاش ماست</div>
+
+    
+   <h2>انواع پیتزا</h2>
+    <div class="menu-section">
+        <table>
+            <tr><th>نام</th><th>تک</th><th>دو نفره</th></tr>
+            <tr><td>پیتزا ویژه تپل</td><td>314</td><td>404</td></tr>
+            <tr><td>پیتزا مخلوط</td><td>284</td><td>344</td></tr>
+            <tr><td>پیتزا قارچ و مرغ</td><td>312</td><td>374</td></tr>
+            <tr><td>پیتزا قارچ و گوشت</td><td>307</td><td>464</td></tr>
+            <tr><td>پیتزا مرغ و گوشت</td><td>374</td><td>510</td></tr>
+            <tr><td>پیتزا فیله مرغ</td><td>344</td><td>480</td></tr>
+            <tr><td>پیتزا رست بیف</td><td>337</td><td>520</td></tr>
+            <tr><td>پیتزا چهار فصل</td><td>408</td><td>516</td></tr>
+            <tr><td>پیتزا پپرونی</td><td>300</td><td>404</td></tr>
+            <tr><td>پیتزا یونانی</td><td>314</td><td>420</td></tr>
+            <tr><td>پیتزا سوسیس</td><td>270</td><td>344</td></tr>
+            <tr><td>پیتزا قارچ و سوسیس</td><td>300</td><td>374</td></tr>
+            <tr><td>پیتزا معمولی</td><td>270</td><td>330</td></tr>
+            <tr><td>پیتزا سبزیجات</td><td>264</td><td>408</td></tr>
+            <tr><td>پیتزا دریایی</td><td>336</td><td>456</td></tr>
+            <tr><td>پیتزا مینی ویژه</td><td>150</td><td>-</td></tr>
+        </table>
+    </div> 
+
+
+    <h2>ساندویچ سرد</h2>
+    <div class="menu-section">
+        <table>
+            <tr><th>نام</th><th>تک</th><th>دوبل</th></tr>
+            <tr><td>ژامبون سرد مرغ</td><td>204</td><td>240</td></tr>
+            <tr><td>ژامبون سرد گوشت</td><td>226</td><td>276</td></tr>
+            <tr><td>ژامبون گوشت و مرغ</td><td>250</td><td>300</td></tr>
+            <tr><td>الویه مرغ</td><td>200</td><td>320</td></tr>
+        </table>
+    </div>
+
+   
+    <h2>غذا های پرسی</h2>
+    <div class="menu-section">
+        <table>
+            <tr><th>نام</th><th>تک</th><th>دوبل</th></tr>
+            <tr><td>مرغ بریان کامل</td><td>430</td><td>-</td></tr>
+            <tr><td>کتف بال پرسی</td><td>250</td><td>-</td></tr>
+            <tr><td>کتف بال کیلویی</td><td>570</td><td>-</td></tr>
+            <tr><td>رون پرسی</td><td>200</td><td>-</td></tr>
+            <tr><td>رون بریان بدون مخلفات</td><td>140</td><td>-</td></tr>
+            <tr><td>الویه کیلویی</td><td>480</td><td>-</td></tr>
+            <tr><td>بندری ویژه کیلویی</td><td>480</td><td>-</td></tr>
+        </table>
+  
+
+    
+
+<!-- Page 2 Start -->
+ <h2>ساندویچ ویژه</h2>
+    <div class="menu-section">
+        <table>
+            <tr><th>نام</th><th>تک</th><th>دوبل</th></tr>
+            <tr><td>همبرگر ویژه</td><td>203</td><td>284</td></tr>
+            <tr><td>قارچ برگر</td><td>233</td><td>287</td></tr>
+            <tr><td>چیزبرگر</td><td>209</td><td>262</td></tr>
+            <tr><td>رویال برگر</td><td>248</td><td>314</td></tr>
+            <tr><td>دوبل برگر قارچ و پنیر</td><td>312</td><td>390</td></tr>
+            <tr><td>زاپاتا مخصوص</td><td>262</td><td>330</td></tr>
+            <tr><td>کباب ترکی گوشت</td><td>313</td><td>438</td></tr>
+            <tr><td>کباب ترکی مرغ</td><td>264</td><td>344</td></tr>
+            <tr><td>کباب ترکی گوشت پرسی</td><td>-</td><td>636</td></tr>
+        </table>
+    </div>
+
+<div class="container">
+    <h2>ساندویچ‌ها</h2>
+    <div class="menu-section">
+        <table>
+            <tr><th>نام</th><th>تک</th><th>دوبل</th></tr>
+            <tr><td>ساندویچ مرغ ساده</td><td>240</td><td>300</td></tr>
+            <tr><td>مرغ با پنیر و قارچ</td><td>287</td><td>334</td></tr>
+            <tr><td>مرغ با پنیر</td><td>262</td><td>330</td></tr>
+            <tr><td>فیله ساده</td><td>284</td><td>320</td></tr>
+            <tr><td>فیله با قارچ و پنیر</td><td>344</td><td>372</td></tr>
+            <tr><td>بندری ساده</td><td>196</td><td>270</td></tr>
+            <tr><td>بندری با پنیر</td><td>233</td><td>287</td></tr>
+            <tr><td>بندری با قارچ و پنیر</td><td>256</td><td>293</td></tr>
+            <tr><td>هات‌داگ ساده</td><td>220</td><td>270</td></tr>
+            <tr><td>هات‌داگ با پنیر</td><td>230</td><td>287</td></tr>
+            <tr><td>هات‌داگ قارچ و پنیر</td><td>262</td><td>330</td></tr>
+            <tr><td>سوسیس بلغاری</td><td>218</td><td>270</td></tr>
+            <tr><td>سوسیس کوکتل</td><td>203</td><td>238</td></tr>
+            <tr><td>ژامبون تنوری</td><td>248</td><td>314</td></tr>
+        </table>
+    </div>
+
+    
+    <h2>پیش غذا</h2>
+    <div class="menu-section">
+        <table>
+            <tr><th>نام</th><th>کوچک</th><th>بزرگ</th></tr>
+            <tr><td>سیب‌زمینی ساده</td><td>112</td><td>160</td></tr>
+            <tr><td>سیب‌زمینی با پنیر</td><td>138</td><td>188</td></tr>
+            <tr><td>سیب‌زمینی قارچ و پنیر</td><td>163</td><td>200</td></tr>
+            <tr><td>سالاد اندونزی</td><td>68</td><td>-</td></tr>
+            <tr><td>سالاد الویه تیل</td><td>150</td><td>210</td></tr>
+            <tr><td>سالاد فصل</td><td>80</td><td>-</td></tr>
+        </table>
+    </div>
+</div>
+<div class="footer">
+        شهرری، میدان نماز، خیابان 35 متری (امام حسین)، پلاک 171
+        <br> تماس: 09126504624 - 09301347940
+    </div>
+</div>
+<!-- Page 2 End -->
+
+</body>
+</html>
